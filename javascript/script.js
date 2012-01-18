@@ -4,15 +4,6 @@ var MAX_IMAGES = 220;
 var IMAGES_PER_ROW = 20;
 var req;
 
-function openUrl()
-{
-  var href = this.href;
-  chrome.tabs.getSelected(null, function(tab)
-  {
-    chrome.tabs.create({ index: tab.index + 1, url: href });
-  }); 
-}
-
 function contains(shouldContain, filter) {
   var result = false;
   if (filter.length > 0) {
@@ -33,7 +24,7 @@ function showPhotos() {
   globalLoadCount++;
   var filterArray = {};
   var filter = localStorage["data.user.filter"];
-  if (null != filter) {
+  if (null !== filter) {
     filterArray = JSON.parse(filter).split("\n");
   }
 
@@ -48,11 +39,10 @@ function showPhotos() {
       img.src = thumbnail.getAttribute("url");
       img.title = titleText;
 
-      var linkSrc = item.getElementsByTagName("content")[0].getAttribute("url")
+      var linkSrc = item.getElementsByTagName("content")[0].getAttribute("url");
       var link = document.createElement("a");
       link.href = "http://www.digi-images.de/showImage.html?imageId="+ linkSrc.replace(/^.*imageId=(\d+).*$/, "$1") +"&custAlbum=lastup";
       link.appendChild(img);
-      link.addEventListener("click", openUrl, false);
       var div = document.createElement("div");
       div.setAttribute("class", "step slide");
       var xPos = (globalImageCount % IMAGES_PER_ROW) * 555;
@@ -77,7 +67,7 @@ function showPhotos() {
 function load(start) {
   var host = localStorage["data.rss.url"];
   var url = "http://www.digi-images.de/cooliris.rss?&custAlbum=lastup&start=" + start;
-  if (null != host && host.match("^.*?:\\.*")) {
+  if (null !== host && host.match("^.*?:\\.*")) {
     url = JSON.parse(host);
   }
 
