@@ -1,0 +1,19 @@
+{
+	"name": "Digi-Images Slider",
+	"version": "1.0",
+	"description": "Slide through Digi-Images photos. See Digi-Images on http://www.digi-images.de/ .",
+	"app": {
+    "launch": {
+      "local_path": "main.html",
+      "container": "tab"
+    }
+  },
+	"icons": {
+	  "128": "icon.png",
+	  "48": "icon.png",
+	  "16": "icon.png"
+	},
+	"options_page": "options.html",
+	"permissions": ["tabs", "http://www.digi-images.de/*"]
+}
+

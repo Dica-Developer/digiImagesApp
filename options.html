@@ -1,0 +1,51 @@
+<html>
+	<head>
+		<title>Digi-Images Favorites</title>
+		<script type="text/javascript">
+			function save(){
+				var feed = document.querySelector("#feedBox").value;
+				localStorage["data.rss.url"] = JSON.stringify(feed);
+				var filter = document.querySelector("#filterBox").value;
+				var newFilter = "";
+				var filterArray = filter.split("\n");
+				for (var i = 0; i < filterArray.length; i++) {
+					var filterTemp = filterArray[i].replace(/^\s/g, "");
+					filterTemp = filterTemp.replace(/\s$/g, "");
+					if (filterTemp.length > 0) {
+						if (newFilter.length > 0) {
+							newFilter = newFilter + "\n";
+						}
+						newFilter = newFilter + filterTemp;
+					}
+				}
+				localStorage["data.user.filter"] = JSON.stringify(newFilter);
+				window.close();
+			}
+
+			function fill(){
+				var feed = localStorage["data.rss.url"];
+				document.querySelector("#feedBox").value = JSON.parse(feed);
+				var filter = localStorage["data.user.filter"];
+				document.querySelector("#filterBox").value = JSON.parse(filter);
+			}
+
+		</script>
+	</head>
+	<body onload="fill();">
+		<div>
+			<div>
+				<label>Digi-Images RSS feed url</label>
+				<br />
+				<input spellcheck="false" id="feedBox" type="text" size="30">
+				<br />
+				<label>Titel and user filter</label>
+				<br />
+				<textarea spellcheck="false" id="filterBox" rows="10" cols="30"></textarea>
+				<br />
+				<button id="okBtn" onclick="save()">Save</button>
+				<br />
+				<label>You would like to support the developement then donate. You would like to have a new feature in the extension then contact me before donating.</label>
+			</div>
+		</div>
+	</body>
+</html>
