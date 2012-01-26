@@ -1,6 +1,6 @@
 {
 	"name": "Digi-Images Slider",
-	"version": "1.0",
+	"version": "2.0",
 	"description": "Slide through Digi-Images photos. See Digi-Images on http://www.digi-images.de/ .",
 	"app": {
     "launch": {
@@ -14,6 +14,6 @@
 	  "16": "icon.png"
 	},
 	"options_page": "options.html",
-	"permissions": ["tabs", "http://www.digi-images.de/*"]
+	"permissions": ["http://www.digi-images.de/*"]
 }
 
