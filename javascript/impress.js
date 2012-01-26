@@ -113,7 +113,7 @@
     impress.appendChild(canvas);
     
     var steps = $$(".step", impress);
-    
+
     // SETUP
     // set initial values and defaults
     
@@ -186,6 +186,11 @@
 
     var active = null;
     var hashTimeout = null;
+    var hovered = null;
+    
+    var isOverview = function() {
+      return (active !== null && active !== undefined && "overview" === active.id);
+    }
     
     var select = function ( el ) {
         if ( !el || !el.stepData || el == active) {
@@ -265,27 +270,55 @@
     
     document.addEventListener("keydown", function ( event ) {
         if ( event.keyCode == 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+          if ( !isOverview() ) {
             var next = active;
             switch( event.keyCode ) {
                 case 33:  // pg up
                 case 37:  // left
                 case 38:  // up
                          next = steps.indexOf( active ) - 1;
-                         next = next >= 0 ? steps[ next ] : steps[ steps.length-1 ];
+                         next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
                          break;
                 case 9:   // tab
-                case 32:  // space
                 case 34:  // pg down
                 case 39:  // right
                 case 40:  // down
                          next = steps.indexOf( active ) + 1;
-                         next = next < steps.length ? steps[ next ] : steps[ 0 ];
+                         next = next < steps.length ? steps[ next ] : steps[ 1 ];
                          break; 
+                case 32: // space
+                         next = steps[ 0 ];
+                         hovered = active;
+                         break;  
             }
-            
             select(next);
-            
-            event.preventDefault();
+          } else {
+            var next = hovered;
+            switch( event.keyCode ) {
+                case 33:  // pg up
+                case 37:  // left
+                case 38:  // up
+                         next = steps.indexOf( hovered ) - 1;
+                         next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
+                         hovered = next;
+                         break;
+                case 9:   // tab
+                case 34:  // pg down
+                case 39:  // right
+                case 40:  // down
+                         next = steps.indexOf( hovered ) + 1;
+                         next = next < steps.length ? steps[ next ] : steps[ 1 ];
+                         hovered = next;
+                         break; 
+                case 32: // space
+                         next = steps.indexOf( hovered );
+                         next = steps[ next ];
+                         select(next);
+                         break;  
+            }
+            // highlight active element
+          }
+          event.preventDefault();
         }
     }, false);
 
