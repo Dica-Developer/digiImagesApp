@@ -13,7 +13,7 @@
 	  "48": "icon.png",
 	  "16": "icon.png"
 	},
-	"options_page": "options.html",
+	"options_page": "options/index.html",
 	"permissions": ["http://www.digi-images.de/*"]
 }
 
