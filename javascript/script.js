@@ -50,6 +50,7 @@ function showPhotos() {
       div.setAttribute("data-x", xPos);
       div.setAttribute("data-y", yPos);
       div.setAttribute("data-scale", "1");
+      div.setAttribute("data-hover", "2");
       div.appendChild(link);
       document.getElementById("impress").appendChild(div);
       globalImageCount++;

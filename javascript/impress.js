@@ -86,6 +86,10 @@
     var scale = function ( s ) {
         return " scaleX(" + s.x + ") scaleY(" + s.y + ") scaleZ(" + s.z + ") ";
     };
+
+    var hoverScale = function ( s ) {
+        return " scaleX(" + s.x + ") scaleY(" + s.y + ") scaleZ(" + s.z + ") ";
+    };
     
     // CHECK SUPPORT
     
@@ -128,7 +132,7 @@
         position: "absolute",
         transformOrigin: "top left",
         transition: "all 1s ease-in-out",
-        transformStyle: "preserve-3d"
+        transformStyle: "preserve-3d",
     };
     
     css(impress, props);
@@ -162,6 +166,11 @@
                     x: data.scaleX || data.scale || 1,
                     y: data.scaleY || data.scale || 1,
                     z: data.scaleZ || 1
+                },
+                hoverScale: {
+                    x: data.hoverX || data.hover || 1,
+                    y: data.hoverY || data.hover || 1,
+                    z: data.hoverZ || 1
                 }
             };
         
@@ -275,29 +284,39 @@
             switch( event.keyCode ) {
                 case 33:  // pg up
                 case 37:  // left
-                case 38:  // up
                          next = steps.indexOf( active ) - 1;
                          next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
+                         select(next);
+                         break;
+                case 38:  // up
+                         next = steps.indexOf( active ) - 20;
+                         next = next >= 1 ? steps[ next ] : steps[ steps.length+next ];
+                         select(next);
                          break;
                 case 9:   // tab
                 case 34:  // pg down
                 case 39:  // right
-                case 40:  // down
                          next = steps.indexOf( active ) + 1;
                          next = next < steps.length ? steps[ next ] : steps[ 1 ];
+                         select(next);
+                         break; 
+                case 40:  // down
+                         next = steps.indexOf( active ) + 20;
+                         next = next < steps.length ? steps[ next ] : steps[ next-steps.length ];
+                         select(next);
                          break; 
                 case 32: // space
                          next = steps[ 0 ];
                          hovered = active;
+                         select(next);
+                         hover(hovered);
                          break;  
             }
-            select(next);
           } else {
             var next = hovered;
             switch( event.keyCode ) {
                 case 33:  // pg up
                 case 37:  // left
-                case 38:  // up
                          next = steps.indexOf( hovered ) - 1;
                          next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
                          if (null !== hovered) {
@@ -306,10 +325,18 @@
                          hovered = next;
                          hover(hovered);
                          break;
+                case 38:  // up
+                         next = steps.indexOf( hovered ) - 20;
+                         next = next >= 1 ? steps[ next ] : steps[ steps.length+next ];
+                         if (null !== hovered) {
+                            unHover(hovered);
+                         }
+                         hovered = next;
+                         hover(hovered);
+                         break;
                 case 9:   // tab
                 case 34:  // pg down
                 case 39:  // right
-                case 40:  // down
                          next = steps.indexOf( hovered ) + 1;
                          next = next < steps.length ? steps[ next ] : steps[ 1 ];
                          if (null !== hovered) {
@@ -317,25 +344,60 @@
                          }
                          hovered = next;
                          hover(hovered);
+                         break;
+                case 40:  // down
+                         next = steps.indexOf( hovered ) + 20;
+                         next = next < steps.length ? steps[ next ] : steps[ next-steps.length ];
+                         if (null !== hovered) {
+                            unHover(hovered);
+                         }
+                         hovered = next;
+                         hover(hovered);
                          break; 
                 case 32: // space
+                         unHover(hovered);
                          next = steps.indexOf( hovered );
                          next = steps[ next ];
                          select(next);
                          break;  
             }
-            // highlight active element
           }
           event.preventDefault();
         }
     }, false);
     
     var hover = function(el) {
-        el.classList.add("hovered");
+        var step = el.stepData;
+        css(el, {
+            position: "absolute",
+            transform: "translate(-50%,-50%)" +
+                       translate(step.translate) +
+                       rotate(step.rotate) +
+                       hoverScale(step.hoverScale),
+            transformStyle: "preserve-3d",
+            transitionProperty: "all",
+            transitionTimingFunction: "ease-out",
+            transitionDuration: "500ms"
+        });
+        el.style["z-index"] = "1";
+        el.style["box-shadow"] = "32px 32px 40px #000";
     };
 
     var unHover = function(el) {
-        el.classList.remove("hovered");
+        var step = el.stepData;
+        css(el, {
+            position: "absolute",
+            transform: "translate(-50%,-50%)" +
+                       translate(step.translate) +
+                       rotate(step.rotate) +
+                       scale(step.scale),
+            transformStyle: "preserve-3d",
+            transitionProperty: "all",
+            transitionTimingFunction: "ease-out",
+            transitionDuration: "500ms"
+        });
+        el.style["z-index"] = "";
+        el.style["box-shadow"] = "";
     };
 
     document.addEventListener("click", function ( event ) {
@@ -360,12 +422,6 @@
         if ( select(target) ) {
             event.preventDefault();
         }
-    }, false);
-    
-    document.addEventListener("mousewheel", function ( event ) {
-        var next = steps.indexOf( active ) - event.wheelDelta / Math.abs(event.wheelDelta);
-        next = next >= 0 ? steps[ next ] : steps[ steps.length-1 ];
-        select(next);
     }, false);
     
     var getElementFromUrl = function () {
