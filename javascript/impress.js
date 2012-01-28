@@ -300,7 +300,11 @@
                 case 38:  // up
                          next = steps.indexOf( hovered ) - 1;
                          next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
+                         if (null !== hovered) {
+                            unHover(hovered);
+                         }
                          hovered = next;
+                         hover(hovered);
                          break;
                 case 9:   // tab
                 case 34:  // pg down
@@ -308,7 +312,11 @@
                 case 40:  // down
                          next = steps.indexOf( hovered ) + 1;
                          next = next < steps.length ? steps[ next ] : steps[ 1 ];
+                         if (null !== hovered) {
+                            unHover(hovered);
+                         }
                          hovered = next;
+                         hover(hovered);
                          break; 
                 case 32: // space
                          next = steps.indexOf( hovered );
@@ -321,6 +329,14 @@
           event.preventDefault();
         }
     }, false);
+    
+    var hover = function(el) {
+        el.classList.add("hovered");
+    };
+
+    var unHover = function(el) {
+        el.classList.remove("hovered");
+    };
 
     document.addEventListener("click", function ( event ) {
         // event delegation with "bubbling"
