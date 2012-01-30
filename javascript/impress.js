@@ -351,7 +351,6 @@
             transitionTimingFunction: "ease-out",
             transitionDuration: "500ms"
         });
-        el.style["z-index"] = "1";
         el.style["box-shadow"] = "32px 32px 40px #000";
     };
 
@@ -368,7 +367,6 @@
             transitionTimingFunction: "ease-out",
             transitionDuration: "500ms"
         });
-        el.style["z-index"] = "";
         el.style["box-shadow"] = "";
     };
 
