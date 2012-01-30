@@ -45,6 +45,10 @@
     var arrayify = function ( a ) {
         return [].slice.call( a );
     };
+	Array.prototype.contains = function(searchValue){
+		for (var i = 0, len = this.length;i < len && this[i] !== searchValue;i++);
+		return i < len;
+	};
     
     var css = function ( el, props ) {
         var key, pkey;
@@ -247,11 +251,12 @@
 	function partiallyLoad(next) {
 		if (next >= (globalImageCount - IMAGES_PER_ROW)) load(35 * globalLoadCount);
 	}
-
+	var keyCode = [9, 32, 33, 34, 37, 38, 39, 40];
 	document.addEventListener("keydown", function (event) {
-		if (event.keyCode == 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40)) {
+		if (keyCode.contains(event.keyCode)) {
+			hovered = hovered || steps[0];
+			var next;
 			if (!isOverview()) {
-				var next = active;
 				switch (event.keyCode) {
 					case 33:  // pg up
 					case 37:  // left
@@ -288,7 +293,6 @@
 						break;
 				}
 			} else {
-				var next = hovered;
 				switch (event.keyCode) {
 					case 33:  // pg up
 					case 37:  // left
