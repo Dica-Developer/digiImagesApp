@@ -292,9 +292,9 @@
 		if (next >= (globalImageCount - IMAGES_PER_ROW)) load(35 * globalLoadCount);
 	}
 
-	var keyCode = [9, 32, 33, 34, 37, 38, 39, 40];
+	var keyCodes = [9, 13, 27, 32, 33, 34, 37, 38, 39, 40];
 	document.addEventListener("keydown", function (event) {
-		if (keyCode.contains(event.keyCode)) {
+		if (keyCodes.contains(event.keyCode)) {
 			hovered = hovered || steps[0];
 			var next;
 			if (!isOverview()) {
@@ -337,6 +337,9 @@
 						select(next);
 						hover(hovered);
 						break;
+					case 13: //enter/return
+						var href = $('a',active).getAttribute('href');
+						document.location.href = href;
 				}
 			} else {
 				switch (event.keyCode) {
@@ -388,6 +391,12 @@
 						next = steps.indexOf(hovered);
 						next = steps[ next ];
 						select(next);
+						break;
+					case 13: //enter/return
+						var href = $('a',hovered).getAttribute('href');
+						document.location.href = href;
+					case 27: //esc
+						unHover(hovered);
 						break;
 				}
 			}
