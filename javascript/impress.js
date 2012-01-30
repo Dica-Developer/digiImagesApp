@@ -204,14 +204,23 @@
                 x: 1 / parseFloat(step.scale.x),
                 y: 1 / parseFloat(step.scale.y),
                 z: 1 / parseFloat(step.scale.z)
-            },
-            translate: {
-                x: -step.translate.x,
-                y: -step.translate.y,
-                z: -step.translate.z
             }
         };
-        
+
+	    if (el.id === 'overview') {
+			target.translate = {
+				x: -step.translate.x,
+				y: -step.translate.y/2,
+				z: -step.translate.z
+			}
+		}else{
+			target.translate = {
+				x: -step.translate.x,
+				y: -step.translate.y,
+				z: -step.translate.z
+			}
+		}
+
         var zoomin = target.scale.x >= current.scale.x;
         
         css(impress, {
@@ -236,9 +245,7 @@
     // EVENTS
 
 	function partiallyLoad(next) {
-		if (next >= (globalImageCount - IMAGES_PER_ROW)) {
-			load(35 * globalLoadCount);
-		}
+		if (next >= (globalImageCount - IMAGES_PER_ROW)) load(35 * globalLoadCount);
 	}
 
 	document.addEventListener("keydown", function (event) {
