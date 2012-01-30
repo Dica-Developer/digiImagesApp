@@ -90,7 +90,7 @@
     };
 
 	// CHECK SUPPORT
-    
+
     var ua = navigator.userAgent.toLowerCase();
     var impressSupported = ( pfx("perspective") !== null ) &&
                            ( ua.search(/(iphone)|(ipod)|(ipad)|(android)/) == -1 );
@@ -147,52 +147,7 @@
         scale:     { x: 1, y: 1, z: 1 }
     };
 
-	steps.forEach(function (el, idx) {
-		var data = el.dataset,
-			step = {
-				translate:{
-					x:data.x || 0,
-					y:data.y || 0,
-					z:data.z || 0
-				},
-				hoverTranslate:{
-					x:data.x || 0,
-					y:data.y || 0,
-					z:data.z + 200 || 200
-				},
-				rotate:{
-					x:data.rotateX || 0,
-					y:data.rotateY || 0,
-					z:data.rotateZ || data.rotate || 0
-				},
-				scale:{
-					x:data.scaleX || data.scale || 1,
-					y:data.scaleY || data.scale || 1,
-					z:data.scaleZ || 1
-				},
-				hoverScale:{
-					x:data.hoverX || data.hover || 1,
-					y:data.hoverY || data.hover || 1,
-					z:data.hoverZ || 1
-				}
-			};
-        
-        el.stepData = step;
-        
-        if ( !el.id ) {
-            el.id = "step-" + (idx + 1);
-        }
-        
-        css(el, {
-            position: "absolute",
-            transform: "translate(-50%,-50%)" +
-                       translate(step.translate) +
-                       rotate(step.rotate, false) +
-                       scale(step.scale),
-            transformStyle: "preserve-3d"
-        });
-        
-    });
+	cssTranslation();
 
     // making given step active
 
@@ -436,7 +391,57 @@
     window.addEventListener("hashchange", function () {
         select( getElementFromUrl() );
     }, false);
-    
+
+	function cssTranslation() {
+			steps.forEach(function (el, idx) {
+				var data = el.dataset,
+					step = {
+						translate:{
+							x:data.x || 0,
+							y:data.y || 0,
+							z:data.z || 0
+						},
+						hoverTranslate:{
+							x:data.x || 0,
+							y:data.y || 0,
+							z:data.z + 200 || 200
+						},
+						rotate:{
+							x:data.rotateX || 0,
+							y:data.rotateY || 0,
+							z:data.rotateZ || data.rotate || 0
+						},
+						scale:{
+							x:data.scaleX || data.scale || 1,
+							y:data.scaleY || data.scale || 1,
+							z:data.scaleZ || 1
+						},
+						hoverScale:{
+							x:data.hoverX || data.hover || 1,
+							y:data.hoverY || data.hover || 1,
+							z:data.hoverZ || 1
+						}
+					};
+
+				el.stepData = step;
+
+				if (!el.id) {
+					el.id = "step-" + (idx + 1);
+				}
+
+				css(el, {
+					position:"absolute",
+					transform:"translate(-50%,-50%)" +
+						translate(step.translate) +
+						rotate(step.rotate, false) +
+						scale(step.scale),
+					transformStyle:"preserve-3d"
+				});
+
+			});
+		}
+
+
     // START 
     // by selecting step defined in url or first step of the presentation
     select(getElementFromUrl() || steps[0]);
