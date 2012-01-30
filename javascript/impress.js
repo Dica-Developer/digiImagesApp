@@ -89,11 +89,7 @@
         return " scaleX(" + s.x + ") scaleY(" + s.y + ") scaleZ(" + s.z + ") ";
     };
 
-    var hoverScale = function ( s ) {
-        return " scaleX(" + s.x + ") scaleY(" + s.y + ") scaleZ(" + s.z + ") ";
-    };
-    
-    // CHECK SUPPORT
+	// CHECK SUPPORT
     
     var ua = navigator.userAgent.toLowerCase();
     var impressSupported = ( pfx("perspective") !== null ) &&
@@ -151,30 +147,35 @@
         scale:     { x: 1, y: 1, z: 1 }
     };
 
-    steps.forEach(function ( el, idx ) {
-        var data = el.dataset,
-            step = {
-                translate: {
-                    x: data.x || 0,
-                    y: data.y || 0,
-                    z: data.z || 0
-                },
-                rotate: {
-                    x: data.rotateX || 0,
-                    y: data.rotateY || 0,
-                    z: data.rotateZ || data.rotate || 0
-                },
-                scale: {
-                    x: data.scaleX || data.scale || 1,
-                    y: data.scaleY || data.scale || 1,
-                    z: data.scaleZ || 1
-                },
-                hoverScale: {
-                    x: data.hoverX || data.hover || 1,
-                    y: data.hoverY || data.hover || 1,
-                    z: data.hoverZ || 1
-                }
-            };
+	steps.forEach(function (el, idx) {
+		var data = el.dataset,
+			step = {
+				translate:{
+					x:data.x || 0,
+					y:data.y || 0,
+					z:data.z || 0
+				},
+				hoverTranslate:{
+					x:data.x || 0,
+					y:data.y || 0,
+					z:data.z + 200 || 200
+				},
+				rotate:{
+					x:data.rotateX || 0,
+					y:data.rotateY || 0,
+					z:data.rotateZ || data.rotate || 0
+				},
+				scale:{
+					x:data.scaleX || data.scale || 1,
+					y:data.scaleY || data.scale || 1,
+					z:data.scaleZ || 1
+				},
+				hoverScale:{
+					x:data.hoverX || data.hover || 1,
+					y:data.hoverY || data.hover || 1,
+					z:data.hoverZ || 1
+				}
+			};
         
         el.stepData = step;
         
@@ -373,9 +374,9 @@
         css(el, {
             position: "absolute",
             transform: "translate(-50%,-50%)" +
-                       translate(step.translate) +
+                       translate(step.hoverTranslate) +
                        rotate(step.rotate, false) +
-                       hoverScale(step.hoverScale),
+                       scale(step.hoverScale),
             transformStyle: "preserve-3d",
             transitionProperty: "all",
             transitionTimingFunction: "ease-out",
