@@ -38,7 +38,7 @@ function showPhotos() {
 		var titleText = title.firstChild.nodeValue;
 		if (contains(titleText, filterArray)) {
 			var img = document.createElement("image");
-			img.src = thumbnail.getAttribute("url");
+			img.src = thumbnail.getAttribute("url").replace('size=500','size=300');
 			img.title = titleText;
 
 			var linkSrc = item.getElementsByTagName("content")[0].getAttribute("url");
@@ -47,8 +47,8 @@ function showPhotos() {
 			link.appendChild(img);
 			var div = document.createElement("div");
 			div.setAttribute("class", "step slide");
-			var xPos = (globalImageCount % IMAGES_PER_ROW) * 555;
-			var yPos = Math.floor(globalImageCount / IMAGES_PER_ROW) * 555;
+			var xPos = (globalImageCount % IMAGES_PER_ROW) * 355;
+			var yPos = Math.floor(globalImageCount / IMAGES_PER_ROW) * 355;
 			div.setAttribute("data-x", xPos);
 			div.setAttribute("data-y", yPos);
 			div.setAttribute("data-scale", "1");

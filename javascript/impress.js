@@ -45,6 +45,7 @@
     var arrayify = function ( a ) {
         return [].slice.call( a );
     };
+
 	Array.prototype.contains = function(searchValue){
 		for (var i = 0, len = this.length;i < len && this[i] !== searchValue;i++);
 		return i < len;
@@ -458,13 +459,9 @@
 					scale(step.scale),
 				transformStyle:"preserve-3d"
 			});
-			if (partiallyLoad) {
-				canvas.appendChild(el);
-			}
+			if (partiallyLoad) canvas.appendChild(el);
 		});
-		if (partiallyLoad) {
-			steps = $$(".step", impress);
-		}
+		if (partiallyLoad) steps = $$(".step", impress);
 	}
 
 
