@@ -29,22 +29,24 @@ function showPhotos() {
 		filterArray = JSON.parse(filter).split("\n");
 	}
 
-	var items = req.responseXML.getElementsByTagName("item"),
-		tmpDiv = document.createElement('div');
-	for (var i = 0; i < items.length && globalImageCount < MAX_IMAGES; i++) {
+	var items = req.responseXML.getElementsByTagName("item");
+	var tmpDiv = document.createElement('div');
+	for (var i = 0, l = items.length; i < l && globalImageCount < MAX_IMAGES; i++) {
 		var item = items[i];
 		var thumbnail = item.getElementsByTagName("thumbnail")[0];
 		var title = item.getElementsByTagName("title")[0];
 		var titleText = title.firstChild.nodeValue;
 		if (contains(titleText, filterArray)) {
 			var img = new Image();
-			img.addEventListener('load', function(){impress.handleDescription(this)});
-			img.src = thumbnail.getAttribute("url").replace('size=500','size=300');
+			img.addEventListener('load', function () {
+				impress.handleDescription(this)
+			});
+			img.src = thumbnail.getAttribute("url").replace('size=500', 'size=300');
 			img.title = titleText;
 
 			var titleSpan = document.createElement('div');
-			titleSpan.setAttribute('class','description');
-			titleSpan.setAttribute('data-rotateZ','90');
+			titleSpan.setAttribute('class', 'description');
+			titleSpan.setAttribute('data-rotateZ', '90');
 			var spanText = document.createTextNode(titleText);
 			titleSpan.appendChild(spanText);
 			var linkSrc = item.getElementsByTagName("content")[0].getAttribute("url");
@@ -78,7 +80,8 @@ function showPhotos() {
 function load(start) {
   var host = localStorage["data.rss.url"];
   var url = "http://www.digi-images.de/cooliris.rss?&custAlbum=lastup&start=" + start;
-  if (null !== host && undefined !== host && host.match("^.*?:\\.*")) {
+  var regex = new RegExp("^.*?:\\.*");
+  if (null !== host && undefined !== host && host.match(regex)) {
     url = JSON.parse(host);
   }
 

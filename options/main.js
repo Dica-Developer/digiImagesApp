@@ -37,7 +37,7 @@ function fill(){
 }
 
 function selectTab() {
-  var currentTab = document.querySelector("li.navbar-item-selected")
+  var currentTab = document.querySelector("li.navbar-item-selected");
   currentTab.classList.remove("navbar-item-selected");
   document.querySelector("#"+ currentTab.id +"Page").style.display = "none";
   this.classList.add("navbar-item-selected");

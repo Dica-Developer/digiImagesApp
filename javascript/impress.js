@@ -47,7 +47,7 @@ var impress = (function (document, window) {
 	};
 
 	Array.prototype.contains = function (searchValue) {
-		for (var i = 0, len = this.length; i < len && this[i] !== searchValue; i++);
+		for (var i = 0, len = this.length; i < len && this[i] !== searchValue; i++){}
 		return i < len;
 	};
 
@@ -124,11 +124,6 @@ var impress = (function (document, window) {
 	// set initial values and defaults
 
 	document.documentElement.style.height = "100%";
-
-	css(document.body, {
-		height:"100%",
-		overflow:"hidden"
-	});
 
 	var props = {
 		position:"absolute",
@@ -295,7 +290,7 @@ var impress = (function (document, window) {
 	document.addEventListener("keydown", function (event) {
 		if (keyCodes.contains(event.keyCode)) {
 			hovered = hovered || steps[0];
-			var next;
+			var next, href;
 			if (!isOverview()) {
 				switch (event.keyCode) {
 					case 33:  // pg up
@@ -337,7 +332,7 @@ var impress = (function (document, window) {
 						hover(hovered);
 						break;
 					case 13: //enter/return
-						var href = $('a',active).getAttribute('href');
+						href = $('a',active).getAttribute('href');
 						document.location.href = href;
 				}
 			} else {
@@ -392,8 +387,9 @@ var impress = (function (document, window) {
 						select(next);
 						break;
 					case 13: //enter/return
-						var href = $('a',hovered).getAttribute('href');
+						href = $('a',hovered).getAttribute('href');
 						document.location.href = href;
+						break;
 					case 27: //esc
 						unHover(hovered);
 						break;
