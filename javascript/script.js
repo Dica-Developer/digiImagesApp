@@ -37,10 +37,16 @@ function showPhotos() {
 		var title = item.getElementsByTagName("title")[0];
 		var titleText = title.firstChild.nodeValue;
 		if (contains(titleText, filterArray)) {
-			var img = document.createElement("image");
+			var img = new Image();
+			img.addEventListener('load', function(){impress.handleDescription(this)});
 			img.src = thumbnail.getAttribute("url").replace('size=500','size=300');
 			img.title = titleText;
 
+			var titleSpan = document.createElement('div');
+			titleSpan.setAttribute('class','description');
+			titleSpan.setAttribute('data-rotateZ','90');
+			var spanText = document.createTextNode(titleText);
+			titleSpan.appendChild(spanText);
 			var linkSrc = item.getElementsByTagName("content")[0].getAttribute("url");
 			var link = document.createElement("a");
 			link.href = "http://www.digi-images.de/showImage.html?imageId=" + linkSrc.replace(/^.*imageId=(\d+).*$/, "$1") + "&custAlbum=lastup";
@@ -54,18 +60,19 @@ function showPhotos() {
 			div.setAttribute("data-scale", "1");
 			div.setAttribute("data-hover", "2");
 			div.appendChild(link);
+			div.appendChild(titleSpan);
 			tmpDiv.appendChild(div);
 			globalImageCount++;
 		}
 	}
-	if (globalLoadCount === 1) {
-		document.getElementById("impress").appendChild(tmpDiv);
-		var script = document.createElement("script");
-		script.setAttribute("src", "javascript/impress.js");
-		document.body.appendChild(script);
-	} else {
-		updateImpress(tmpDiv);
-	}
+//	if (globalLoadCount === 1) {
+//		document.getElementById("impress").appendChild(tmpDiv);
+//		var script = document.createElement("script");
+//		script.setAttribute("src", "javascript/impress.js");
+//		document.body.appendChild(script);
+//	} else {
+		impress.updateImpress(tmpDiv);
+//	}
 }
 
 function load(start) {

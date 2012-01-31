@@ -31,6 +31,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
     line-height: 1;
+    background: none;
 }
 ol, ul {
     list-style: none;
@@ -207,7 +208,7 @@ a:hover {
 
     background-color: white;
 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .5);
     border: 1px solid rgba(0, 0, 0, .3);
 
     font-family: sans-serif;
@@ -263,5 +264,32 @@ a:hover {
     display: block;
 }
 
+.slide > div.description {
+    font-size: .5em;
+    color: #AAA;
+    text-shadow: 2px 2px 4px #CCC;
+    font-family: Helvetica;
+    text-align: center;
+    width: 100%;
+}
+.slide.active > div.description {
+    font-size: .8em;
+    color: #AAA;
+    text-shadow: 2px 2px 4px #CCC;
+    font-family: Helvetica;
+    text-align: center;
+    width: 100%;
+}
 
+img {
+    float: left;
+}
+
+div.description.rotate {
+-webkit-transform: rotateZ(90deg);
+position: absolute;
+top: 0px;
+right: 10px;
+min-height: 100%;
+}
 

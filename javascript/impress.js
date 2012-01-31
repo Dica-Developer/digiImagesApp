@@ -9,7 +9,7 @@
  * Copyright 2011 Bartek Szopka (@bartaz)
  */
 
-(function (document, window) {
+var impress = (function (document, window) {
 
 	// HELPER FUNCTIONS
 
@@ -167,7 +167,6 @@
 	};
 
 	cssTranslation(steps);
-
 	// making given step active
 
 	var active = null;
@@ -510,18 +509,30 @@
 			});
 			if (partiallyLoad) canvas.appendChild(el);
 		});
-		if (partiallyLoad) steps = $$(".step", impress);
+		if (partiallyLoad){
+			steps = $$(".step", impress);
+		}
 	}
 
+	function handleDescription(elem) {
+			var height = elem.offsetHeight;
+			var width = elem.offsetWidth;
+			if(height > width)$('div',elem.parentNode.parentNode).classList.add('rotate');
+	}
 
 	// START
 	// by selecting step defined in url or first step of the presentation
 	select(getElementFromUrl() || steps[0]);
 
 
-	return updateImpress = function (elem) {
+	var updateImpress = function (elem) {
 		elem = arrayify(elem.childNodes);
 		cssTranslation(elem, true);
+	};
+
+	return {
+		updateImpress : updateImpress,
+		handleDescription: handleDescription
 	};
 
 })(document, window);
