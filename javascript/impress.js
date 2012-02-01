@@ -161,7 +161,7 @@ var impress = (function (document, window) {
 		scale:{ x:1, y:1, z:1 }
 	};
 
-	cssTranslation(steps);
+	cssTranslation(steps, false);
 	// making given step active
 
 	var active = null;
