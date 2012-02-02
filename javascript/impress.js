@@ -218,8 +218,8 @@ var impress = (function (document, window) {
 
 		if (el.id === 'overview') {
 			target.translate = {
-				x:-step.translate.x,
-				y:-step.translate.y / 2,
+				x:-700,
+				y:-575,
 				z:-step.translate.z
 			}
 		} else {
@@ -283,7 +283,7 @@ var impress = (function (document, window) {
 	// EVENTS
 
 	function partiallyLoad(next) {
-		if (next >= (globalImageCount - IMAGES_PER_ROW)) load(35 * globalLoadCount);
+		if (next >= (globalImageCount - IMAGES_PER_ROW)) load(PRELOAD_IMAGES * globalLoadCount);
 	}
 
 	var keyCodes = [9, 13, 27, 32, 33, 34, 37, 38, 39, 40];

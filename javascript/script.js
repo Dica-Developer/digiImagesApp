@@ -1,9 +1,38 @@
 var globalLoadCount = 0;
 var globalImageCount = 0;
+var PRELOAD_IMAGES = 25;
 var MAX_IMAGES = 220;
-var IMAGES_PER_ROW = 20;
+var IMAGES_PER_ROW = 1;
 var ELEM_ID = 0;
+var NEXT_START_POSITION = {};
 var req;
+var divMeasur = {
+	height: 355,
+	width: 355
+};
+
+
+var directions = function(xPos, yPos){
+	return {
+		east: {
+			xPos: xPos + divMeasur.width,
+			yPos: yPos
+		},
+		south: {
+			xPos: xPos,
+			yPos: yPos - divMeasur.height
+		},
+		west: {
+			xPos: xPos - divMeasur.width,
+			yPos: yPos
+		},
+		north: {
+			xPos: xPos,
+			yPos: yPos + divMeasur.height
+		},
+		current: 'east'
+	}
+};
 
 function contains(shouldContain, filter) {
   var result = false;
@@ -21,6 +50,38 @@ function contains(shouldContain, filter) {
   return result;
 }
 
+function getXY() {
+
+	var xPos, yPos;
+	if(IMAGES_PER_ROW === 1){
+		xPos = 0;
+		yPos = 0;
+	}else{
+		if(IMAGES_PER_ROW*IMAGES_PER_ROW === globalImageCount){
+			var currentDirection = directions().current;
+			NEXT_START_POSITION = {
+				xPos : __ret.xPos + 355,
+				yPos : __ret.yPos -355
+			};
+			// ansonsten xPos +2*355
+			// direction to south
+			IMAGES_PER_ROW +=2;
+			SIDE_IMAGE_COUNT = 1;
+		}
+		if ((sideImageCount === (IMAGES_PER_ROW - 1))) {
+			// direction 90 degrees to the right
+			// new position
+			SIDE_IMAGE_COUNT = 1;
+		} else {
+			SIDE_IMAGE_COUNT += 1;
+		}
+	}
+
+	NEXT_START_POSITION = {xPos:xPos, yPos:yPos};
+	return NEXT_START_POSITION;
+}
+
+
 function showPhotos() {
 	globalLoadCount++;
 	var filterArray = {};
@@ -31,7 +92,7 @@ function showPhotos() {
 
 	var items = req.responseXML.getElementsByTagName("item");
 	var tmpDiv = document.createElement('div');
-	for (var i = 0, l = items.length; i < l && globalImageCount < MAX_IMAGES; i++) {
+	for (var i = 0, l = items.length; i < l && i < PRELOAD_IMAGES && globalImageCount < MAX_IMAGES ; i++) {
 		var item = items[i];
 		var thumbnail = item.getElementsByTagName("thumbnail")[0];
 		var title = item.getElementsByTagName("title")[0];
@@ -55,10 +116,9 @@ function showPhotos() {
 			link.appendChild(img);
 			var div = document.createElement("div");
 			div.setAttribute("class", "step slide");
-			var xPos = (globalImageCount % IMAGES_PER_ROW) * 355;
-			var yPos = Math.floor(globalImageCount / IMAGES_PER_ROW) * 355;
-			div.setAttribute("data-x", xPos);
-			div.setAttribute("data-y", yPos);
+			var position = getXY();
+			div.setAttribute("data-x", position.xPos);
+			div.setAttribute("data-y", position.yPos);
 			div.setAttribute("data-scale", "1");
 			div.setAttribute("data-hover", "2");
 			div.appendChild(link);
