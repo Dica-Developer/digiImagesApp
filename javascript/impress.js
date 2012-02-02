@@ -27,10 +27,12 @@
 
                 memory[ prop ] = null;
                 for ( var i in props ) {
-                    if ( style[ props[i] ] !== undefined ) {
-                        memory[ prop ] = props[i];
-                        break;
-                    }
+	                if(props.hasOwnProperty(i)){
+	                    if ( style[ props[i] ] !== undefined ) {
+	                        memory[ prop ] = props[i];
+	                        break;
+	                    }
+	                }
                 }
 
             }
@@ -132,7 +134,7 @@
         position: "absolute",
         transformOrigin: "top left",
         transition: "all 1s ease-in-out",
-        transformStyle: "preserve-3d",
+        transformStyle: "preserve-3d"
     };
     
     css(impress, props);
@@ -184,7 +186,7 @@
             position: "absolute",
             transform: "translate(-50%,-50%)" +
                        translate(step.translate) +
-                       rotate(step.rotate) +
+                       rotate(step.rotate, false) +
                        scale(step.scale),
             transformStyle: "preserve-3d"
         });
@@ -199,7 +201,7 @@
     
     var isOverview = function() {
       return (active !== null && active !== undefined && "overview" === active.id);
-    }
+    };
     
     var select = function ( el ) {
         if ( !el || !el.stepData || el == active) {
@@ -372,7 +374,7 @@
             position: "absolute",
             transform: "translate(-50%,-50%)" +
                        translate(step.translate) +
-                       rotate(step.rotate) +
+                       rotate(step.rotate, false) +
                        hoverScale(step.hoverScale),
             transformStyle: "preserve-3d",
             transitionProperty: "all",
@@ -389,7 +391,7 @@
             position: "absolute",
             transform: "translate(-50%,-50%)" +
                        translate(step.translate) +
-                       rotate(step.rotate) +
+                       rotate(step.rotate, false) +
                        scale(step.scale),
             transformStyle: "preserve-3d",
             transitionProperty: "all",
