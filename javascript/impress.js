@@ -147,7 +147,7 @@
         scale:     { x: 1, y: 1, z: 1 }
     };
 
-	cssTranslation();
+	cssTranslation(steps);
 
     // making given step active
 
@@ -234,95 +234,109 @@
     };
     
     // EVENTS
-    
-    document.addEventListener("keydown", function ( event ) {
-        if ( event.keyCode == 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
-          if ( !isOverview() ) {
-            var next = active;
-            switch( event.keyCode ) {
-                case 33:  // pg up
-                case 37:  // left
-                         next = steps.indexOf( active ) - 1;
-                         next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
-                         select(next);
-                         break;
-                case 38:  // up
-                         next = steps.indexOf( active ) - IMAGES_PER_ROW;
-                         next = next >= 1 ? steps[ next ] : steps[ steps.length+next ];
-                         select(next);
-                         break;
-                case 9:   // tab
-                case 34:  // pg down
-                case 39:  // right
-                         next = steps.indexOf( active ) + 1;
-                         next = next < steps.length ? steps[ next ] : steps[ 1 ];
-                         select(next);
-                         break; 
-                case 40:  // down
-                         next = steps.indexOf( active ) + IMAGES_PER_ROW;
-                         next = next < steps.length ? steps[ next ] : steps[ next-steps.length ];
-                         select(next);
-                         break; 
-                case 32: // space
-                         next = steps[ 0 ];
-                         hovered = active;
-                         select(next);
-                         hover(hovered);
-                         break;  
-            }
-          } else {
-            var next = hovered;
-            switch( event.keyCode ) {
-                case 33:  // pg up
-                case 37:  // left
-                         next = steps.indexOf( hovered ) - 1;
-                         next = next >= 1 ? steps[ next ] : steps[ steps.length-1 ];
-                         if (null !== hovered) {
-                            unHover(hovered);
-                         }
-                         hovered = next;
-                         hover(hovered);
-                         break;
-                case 38:  // up
-                         next = steps.indexOf( hovered ) - IMAGES_PER_ROW;
-                         next = next >= 1 ? steps[ next ] : steps[ steps.length+next ];
-                         if (null !== hovered) {
-                            unHover(hovered);
-                         }
-                         hovered = next;
-                         hover(hovered);
-                         break;
-                case 9:   // tab
-                case 34:  // pg down
-                case 39:  // right
-                         next = steps.indexOf( hovered ) + 1;
-                         next = next < steps.length ? steps[ next ] : steps[ 1 ];
-                         if (null !== hovered) {
-                            unHover(hovered);
-                         }
-                         hovered = next;
-                         hover(hovered);
-                         break;
-                case 40:  // down
-                         next = steps.indexOf( hovered ) + IMAGES_PER_ROW;
-                         next = next < steps.length ? steps[ next ] : steps[ next-steps.length ];
-                         if (null !== hovered) {
-                            unHover(hovered);
-                         }
-                         hovered = next;
-                         hover(hovered);
-                         break; 
-                case 32: // space
-                         unHover(hovered);
-                         next = steps.indexOf( hovered );
-                         next = steps[ next ];
-                         select(next);
-                         break;  
-            }
-          }
-          event.preventDefault();
-        }
-    }, false);
+
+	function partiallyLoad(next) {
+		if (next >= (globalImageCount - IMAGES_PER_ROW)) {
+			load(35 * globalLoadCount);
+		}
+	}
+
+	document.addEventListener("keydown", function (event) {
+		if (event.keyCode == 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40)) {
+			if (!isOverview()) {
+				var next = active;
+				switch (event.keyCode) {
+					case 33:  // pg up
+					case 37:  // left
+						next = steps.indexOf(active) - 1;
+						partiallyLoad(next);
+						next = next >= 1 ? steps[ next ] : steps[ steps.length - 1 ];
+						select(next);
+						break;
+					case 38:  // up
+						next = steps.indexOf(active) - IMAGES_PER_ROW;
+						partiallyLoad(next);
+						next = next >= 1 ? steps[ next ] : steps[ steps.length + next ];
+						select(next);
+						break;
+					case 9:   // tab
+					case 34:  // pg down
+					case 39:  // right
+						next = steps.indexOf(active) + 1;
+						partiallyLoad(next);
+						next = next < steps.length ? steps[ next ] : steps[ 1 ];
+						select(next);
+						break;
+					case 40:  // down
+						next = steps.indexOf(active) + IMAGES_PER_ROW;
+						partiallyLoad(next);
+						next = next < steps.length ? steps[ next ] : steps[ next - steps.length ];
+						select(next);
+						break;
+					case 32: // space
+						next = steps[ 0 ];
+						hovered = active;
+						select(next);
+						hover(hovered);
+						break;
+				}
+			} else {
+				var next = hovered;
+				switch (event.keyCode) {
+					case 33:  // pg up
+					case 37:  // left
+						next = steps.indexOf(hovered) - 1;
+						partiallyLoad(next);
+						next = next >= 1 ? steps[ next ] : steps[ steps.length - 1 ];
+						if (null !== hovered) {
+							unHover(hovered);
+						}
+						hovered = next;
+						hover(hovered);
+						break;
+					case 38:  // up
+						next = steps.indexOf(hovered) - IMAGES_PER_ROW;
+						partiallyLoad(next);
+						next = next >= 1 ? steps[ next ] : steps[ steps.length + next ];
+						if (null !== hovered) {
+							unHover(hovered);
+						}
+						hovered = next;
+						hover(hovered);
+						break;
+					case 9:   // tab
+					case 34:  // pg down
+					case 39:  // right
+						next = steps.indexOf(hovered) + 1;
+						partiallyLoad(next);
+						next = next < steps.length ? steps[ next ] : steps[ 1 ];
+						if (null !== hovered) {
+							unHover(hovered);
+						}
+						hovered = next;
+						hover(hovered);
+						break;
+					case 40:  // down
+						next = steps.indexOf(hovered) + IMAGES_PER_ROW;
+						partiallyLoad(next);
+						next = next < steps.length ? steps[ next ] : steps[ next - steps.length ];
+						if (null !== hovered) {
+							unHover(hovered);
+						}
+						hovered = next;
+						hover(hovered);
+						break;
+					case 32: // space
+						unHover(hovered);
+						next = steps.indexOf(hovered);
+						next = steps[ next ];
+						select(next);
+						break;
+				}
+			}
+			event.preventDefault();
+		}
+	}, false);
     
     var hover = function(el) {
         var step = el.stepData;
@@ -392,59 +406,68 @@
         select( getElementFromUrl() );
     }, false);
 
-	function cssTranslation() {
-			steps.forEach(function (el, idx) {
-				var data = el.dataset,
-					step = {
-						translate:{
-							x:data.x || 0,
-							y:data.y || 0,
-							z:data.z || 0
-						},
-						hoverTranslate:{
-							x:data.x || 0,
-							y:data.y || 0,
-							z:data.z + 200 || 200
-						},
-						rotate:{
-							x:data.rotateX || 0,
-							y:data.rotateY || 0,
-							z:data.rotateZ || data.rotate || 0
-						},
-						scale:{
-							x:data.scaleX || data.scale || 1,
-							y:data.scaleY || data.scale || 1,
-							z:data.scaleZ || 1
-						},
-						hoverScale:{
-							x:data.hoverX || data.hover || 1,
-							y:data.hoverY || data.hover || 1,
-							z:data.hoverZ || 1
-						}
-					};
+	function cssTranslation(elem, partiallyLoad) {
+		elem.forEach(function (el, idx) {
+			var data = el.dataset,
+				step = {
+					translate:{
+						x:data.x || 0,
+						y:data.y || 0,
+						z:data.z || 0
+					},
+					hoverTranslate:{
+						x:data.x || 0,
+						y:data.y || 0,
+						z:data.z + 200 || 200
+					},
+					rotate:{
+						x:data.rotateX || 0,
+						y:data.rotateY || 0,
+						z:data.rotateZ || data.rotate || 0
+					},
+					scale:{
+						x:data.scaleX || data.scale || 1,
+						y:data.scaleY || data.scale || 1,
+						z:data.scaleZ || 1
+					},
+					hoverScale:{
+						x:data.hoverX || data.hover || 1,
+						y:data.hoverY || data.hover || 1,
+						z:data.hoverZ || 1
+					}
+				};
 
-				el.stepData = step;
+			el.stepData = step;
+			ELEM_ID++;
+			if (!el.id) el.id = "step-" + ELEM_ID;
 
-				if (!el.id) {
-					el.id = "step-" + (idx + 1);
-				}
-
-				css(el, {
-					position:"absolute",
-					transform:"translate(-50%,-50%)" +
-						translate(step.translate) +
-						rotate(step.rotate, false) +
-						scale(step.scale),
-					transformStyle:"preserve-3d"
-				});
-
+			css(el, {
+				position:"absolute",
+				transform:"translate(-50%,-50%)" +
+					translate(step.translate) +
+					rotate(step.rotate, false) +
+					scale(step.scale),
+				transformStyle:"preserve-3d"
 			});
+			if (partiallyLoad) {
+				canvas.appendChild(el);
+			}
+		});
+		if (partiallyLoad) {
+			steps = $$(".step", impress);
 		}
+	}
 
 
     // START 
     // by selecting step defined in url or first step of the presentation
     select(getElementFromUrl() || steps[0]);
+
+
+	return updateImpress = function(elem){
+			elem = arrayify(elem.childNodes);
+			cssTranslation(elem, true);
+		};
 
 })(document, window);
 
