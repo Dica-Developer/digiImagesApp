@@ -289,7 +289,7 @@
                          select(next);
                          break;
                 case 38:  // up
-                         next = steps.indexOf( active ) - 20;
+                         next = steps.indexOf( active ) - IMAGES_PER_ROW;
                          next = next >= 1 ? steps[ next ] : steps[ steps.length+next ];
                          select(next);
                          break;
@@ -301,7 +301,7 @@
                          select(next);
                          break; 
                 case 40:  // down
-                         next = steps.indexOf( active ) + 20;
+                         next = steps.indexOf( active ) + IMAGES_PER_ROW;
                          next = next < steps.length ? steps[ next ] : steps[ next-steps.length ];
                          select(next);
                          break; 
@@ -326,7 +326,7 @@
                          hover(hovered);
                          break;
                 case 38:  // up
-                         next = steps.indexOf( hovered ) - 20;
+                         next = steps.indexOf( hovered ) - IMAGES_PER_ROW;
                          next = next >= 1 ? steps[ next ] : steps[ steps.length+next ];
                          if (null !== hovered) {
                             unHover(hovered);
@@ -346,7 +346,7 @@
                          hover(hovered);
                          break;
                 case 40:  // down
-                         next = steps.indexOf( hovered ) + 20;
+                         next = steps.indexOf( hovered ) + IMAGES_PER_ROW;
                          next = next < steps.length ? steps[ next ] : steps[ next-steps.length ];
                          if (null !== hovered) {
                             unHover(hovered);
