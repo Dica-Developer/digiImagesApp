@@ -9,6 +9,10 @@
  * Copyright 2011 Bartek Szopka (@bartaz)
  */
 
+/**
+ * Modified by DigiImagesApp-Dev-Team
+ */
+
 (function (document, window) {
 
   // HELPER FUNCTIONS
