@@ -259,3 +259,10 @@ top: 0;
 right: 10px;
 min-height: 100%;
 }
+
+.details {
+    width: 300px;
+    display: none;
+    background-color: #CCC;
+    box-shadow: 4px 4px 4px #333;
+}

@@ -247,6 +247,9 @@ var impress = (function (document, window) {
 			});
 			var img = $('img', el);
 			img.src = img.src.replace('size=300', 'size=500');
+			var nr = el.id.substr(el.id.indexOf('-')+1);
+			var detailsCon = byId('details_'+nr);
+			detailsCon.style.display = 'block';
 		}
 		css(impress, {
 			// to keep the perspective look similar for different scales
@@ -277,6 +280,9 @@ var impress = (function (document, window) {
 			});
 			var img = $('img', el);
 			img.src = img.src.replace('size=500', 'size=300');
+			var nr = el.id.substr(el.id.indexOf('-')+1);
+			var detailsCon = byId('details_'+nr);
+			detailsCon.style.display = '';
 		}
 	}
 
@@ -286,7 +292,7 @@ var impress = (function (document, window) {
 		if (next >= (globalImageCount - IMAGES_PER_ROW)) load(PRELOAD_IMAGES * globalLoadCount);
 	}
 
-	var keyCodes = [9, 13, 27, 32, 33, 34, 37, 38, 39, 40];
+	var keyCodes = [9, 13, 27, 32, 33, 34, 37, 38, 39, 40, 82];
 	document.addEventListener("keydown", function (event) {
 		if (keyCodes.contains(event.keyCode)) {
 			hovered = hovered || steps[0];
@@ -334,6 +340,10 @@ var impress = (function (document, window) {
 					case 13: //enter/return
 						href = $('a',active).getAttribute('href');
 						document.location.href = href;
+						break;
+					case 82: // r
+						var nr = steps.indexOf(active);
+						flipDetails(nr);
 				}
 			} else {
 				switch (event.keyCode) {
@@ -475,9 +485,9 @@ var impress = (function (document, window) {
 						z:data.z + 50 || 50
 					},
 					rotate:{
-						x:data.rotateX || 0,
-						y:data.rotateY || 0,
-						z:data.rotateZ || data.rotate || 0
+						x:data.rotate_x || 0,
+						y:data.rotate_y || 0,
+						z:data.rotate_z || data.rotate || 0
 					},
 					scale:{
 						x:data.scaleX || data.scale || 1,
@@ -490,10 +500,20 @@ var impress = (function (document, window) {
 						z:data.hoverZ || 1
 					}
 				};
-
+			if(el.className === 'details'){
+				step.detailsRotate = {
+									x: 0,
+									y: 0,
+									z: 0
+								}
+			}
 			el.stepData = step;
-			ELEM_ID++;
-			if (!el.id) el.id = "step-" + ELEM_ID;
+			if(elem.className !== 'details'){
+				ELEM_ID++;
+				if (!el.id) el.id = "step-" + ELEM_ID;
+			}else{
+				if (!el.id) el.id = "details-" + ELEM_ID;
+			}
 
 			css(el, {
 				position:"absolute",
@@ -508,12 +528,29 @@ var impress = (function (document, window) {
 		if (partiallyLoad){
 			steps = $$(".step", impress);
 		}
+		if($$('.details', elem[0]).length !== 0) cssTranslation($$('.details', impress),false);
 	}
 
 	function handleDescription(elem) {
 			var height = elem.offsetHeight;
 			var width = elem.offsetWidth;
 			if(height > width)$('div',elem.parentNode.parentNode).classList.add('rotate');
+	}
+
+	function flipDetails(nr){
+		var detailsCon = byId('details_'+nr);
+		var step = detailsCon.stepData;
+				css(detailsCon, {
+					position:"absolute",
+					transform:"translate(-50%,-50%)" +
+						translate(step.translate) +
+						rotate(step.detailsRotate, false) +
+						scale(step.scale),
+					transformStyle:"preserve-3d",
+					transitionProperty:"all",
+					transitionTimingFunction:"ease-out",
+					transitionDuration:"500ms"
+				});
 	}
 
 	// START
@@ -530,6 +567,5 @@ var impress = (function (document, window) {
 		updateImpress : updateImpress,
 		handleDescription: handleDescription
 	};
-
 })(document, window);
 

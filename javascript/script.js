@@ -4,54 +4,115 @@ var PRELOAD_IMAGES = 25;
 var MAX_IMAGES = 220;
 var IMAGES_PER_ROW = 1;
 var ELEM_ID = 0;
-var NEXT_START_POSITION = {};
+var NEXT_START_POSITION = {xPos:0, yPos:0};
+var SIDE_IMAGE_COUNT = 0;
 var req;
+var divMeasures = {
+	width: 355,
+	height: 355
+};
+
+/**
+ * @Class
+ */
+
+var direction = (function(){
+	//private
+	var _directions = ['east','south', 'west', 'north'];
+	var _directionPositions = function (xPos, yPos){
+		return {
+			east:{
+				xPos:xPos + divMeasures.width,
+				yPos:yPos
+			},
+			south : {
+				xPos: xPos,
+				yPos: yPos + divMeasures.height
+			},
+			west : {
+				xPos: xPos - divMeasures.width,
+				yPos: yPos
+			},
+			north : {
+				xPos: xPos,
+				yPos: yPos - divMeasures.height
+			}
+		};
+	};
+	var _actDirection = 0;
+
+
+	//global
+	var getPosition = function(xPos, yPos){
+		return _directionPositions(xPos, yPos)[_directions[_actDirection]];
+	};
+	var setNewDirection = function(){
+		if(_actDirection === _directions.length-1){
+			_actDirection = 0;
+		}else{
+			_actDirection += 1;
+		}
+	};
+	var getDirection = function(){
+		return _directions[_actDirection];
+	};
+
+	return {
+		getPosition : getPosition,
+		setNewDirection: setNewDirection,
+		getDirection: getDirection
+	};
+})();
+
+
+
+
 
 function contains(shouldContain, filter) {
-  var result = false;
   if (filter.length > 0) {
     for (var i = 0; i < filter.length; i++) {
       var regexp = new RegExp(filter[i]);
       if (shouldContain.match(regexp)) {
-        result = true;
-        break;
+        return true;
       }
     }
   } else {
-    result = true;
+    return true;
   }
-  return result;
+  return false;
 }
 
+/**
+ * @return {object} <string : string>
+ */
 function getXY() {
+	var xPos = NEXT_START_POSITION.xPos;
+	var yPos = NEXT_START_POSITION.yPos;
 
-	var xPos, yPos;
-	if(IMAGES_PER_ROW === 1){
-		xPos = 0;
-		yPos = 0;
+	if(IMAGES_PER_ROW*IMAGES_PER_ROW === globalImageCount-1){
+		NEXT_START_POSITION.xPos = direction.getPosition(xPos, yPos).xPos + divMeasures.width;
+		NEXT_START_POSITION.yPos = direction.getPosition(xPos, yPos).yPos - divMeasures.height;
+
+		IMAGES_PER_ROW +=2;
+		SIDE_IMAGE_COUNT = 1;
+	}else if(IMAGES_PER_ROW === 1){
+		NEXT_START_POSITION.xPos = direction.getPosition(xPos, yPos).xPos;
+		NEXT_START_POSITION.yPos = direction.getPosition(xPos, yPos).yPos - divMeasures.height;
+		IMAGES_PER_ROW +=2;
+		SIDE_IMAGE_COUNT = 1;
 	}else{
-		if(IMAGES_PER_ROW*IMAGES_PER_ROW === globalImageCount){
-			var currentDirection = directions().current;
-			NEXT_START_POSITION = {
-				xPos : __ret.xPos + 355,
-				yPos : __ret.yPos -355
-			};
-			// ansonsten xPos +2*355
-			// direction to south
-			IMAGES_PER_ROW +=2;
-			SIDE_IMAGE_COUNT = 1;
-		}
-		if ((sideImageCount === (IMAGES_PER_ROW - 1))) {
-			// direction 90 degrees to the right
-			// new position
-			SIDE_IMAGE_COUNT = 1;
-		} else {
-			SIDE_IMAGE_COUNT += 1;
-		}
+		NEXT_START_POSITION = direction.getPosition(xPos, yPos);
 	}
 
-	NEXT_START_POSITION = {xPos:xPos, yPos:yPos};
-	return NEXT_START_POSITION;
+	//set new direction
+	if ((SIDE_IMAGE_COUNT == (IMAGES_PER_ROW-1)) || IMAGES_PER_ROW === 1){
+		SIDE_IMAGE_COUNT = 1
+		direction.setNewDirection();
+	}else{
+		SIDE_IMAGE_COUNT += 1;
+	}
+	console.log('globalImageCount: %s SIDE_IMAGECOUNT: %d', globalImageCount, SIDE_IMAGE_COUNT);
+	return  {xPos:xPos, yPos:yPos};
 }
 
 
@@ -68,14 +129,15 @@ function showPhotos() {
 	var detailTMPDiv = document.createElement('div');
 	for (var i = 0, l = items.length; i < l && globalImageCount < MAX_IMAGES; i++) {
 		var item = items[i];
-		var thumbnail = item.getElementsByTagName("thumbnail")[0];
+		globalImageCount++;
 		var title = item.getElementsByTagName("title")[0];
 		var titleText = title.firstChild.nodeValue;
-		var detailsText = decodeURIComponent(unescape(item.getElementsByTagName('description')[1].firstChild.nodeValue).replace(/\+/g,  " "));
 		if (contains(titleText, filterArray)) {
+			var thumbnail = item.getElementsByTagName("thumbnail")[0];
+			var detailsText = decodeURIComponent(unescape(item.getElementsByTagName('description')[1].firstChild.nodeValue).replace(/\+/g,  " "));
 			var img = new Image();
 			img.addEventListener('load', function () {
-				impress.handleDescription(this)
+				impress.handleDescription(this);
 			});
 			img.src = thumbnail.getAttribute("url").replace('size=500', 'size=300');
 			img.title = titleText;
@@ -91,7 +153,7 @@ function showPhotos() {
 			link.appendChild(img);
 			var detailsDiv = document.createElement('div');
 			detailsDiv.setAttribute('class','details');
-			detailsDiv.innerHTML = detailsText;
+			detailsDiv.innertHTML = detailsText;
 			var div = document.createElement("div");
 			div.setAttribute("class", "step slide");
 			var position = getXY();
@@ -99,27 +161,20 @@ function showPhotos() {
 			div.setAttribute("data-y", position.yPos);
 			div.setAttribute("data-scale", "1");
 			div.setAttribute("data-hover", "2");
-			detailsDiv.setAttribute("data-x", xPos);
-			detailsDiv.setAttribute("data-y", yPos);
+			div.appendChild(link);
+			div.appendChild(titleSpan);
+
+			detailsDiv.setAttribute("data-x", position.xPos);
+			detailsDiv.setAttribute("data-y", position.yPos);
 			detailsDiv.setAttribute("data-z", "220");
 			detailsDiv.setAttribute("data-scale", "2");
 			detailsDiv.setAttribute("data-rotate_X", "90");
-			div.appendChild(link);
-			div.appendChild(titleSpan);
 			detailTMPDiv.appendChild(detailsDiv);
 			tmpDiv.appendChild(div);
-			globalImageCount++;
 		}
 	}
-//	if (globalLoadCount === 1) {
-//		document.getElementById("impress").appendChild(tmpDiv);
-//		var script = document.createElement("script");
-//		script.setAttribute("src", "javascript/impress.js");
-//		document.body.appendChild(script);
-//	} else {
-		impress.updateImpress(tmpDiv);
-		impress.updateImpress(detailTMPDiv);
-//	}
+	impress.updateImpress(tmpDiv);
+	impress.updateImpress(detailTMPDiv);
 }
 
 function load(start) {
