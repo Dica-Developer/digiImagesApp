@@ -18,7 +18,7 @@ var divMeasures = {
 
 var direction = (function(){
 	//private
-	var _directions = ['east','south', 'west', 'north'];
+	var _directions = ['south', 'west', 'north','east'];
 	var _directionPositions = function (xPos, yPos){
 		return {
 			east:{
@@ -39,7 +39,7 @@ var direction = (function(){
 			}
 		};
 	};
-	var _actDirection = 0;
+	var _actDirection = 0;//[TODO] south instead of 0
 
 
 	//global
@@ -53,6 +53,10 @@ var direction = (function(){
 			_actDirection += 1;
 		}
 	};
+
+	var setDirectionSouth = function(){
+		_actDirection = 0;
+	};
 	var getDirection = function(){
 		return _directions[_actDirection];
 	};
@@ -60,7 +64,8 @@ var direction = (function(){
 	return {
 		getPosition : getPosition,
 		setNewDirection: setNewDirection,
-		getDirection: getDirection
+		getDirection: getDirection,
+		setDirectionSouth : setDirectionSouth
 	};
 })();
 
@@ -85,33 +90,32 @@ function contains(shouldContain, filter) {
 /**
  * @return {object} <string : string>
  */
+var CIRCLE_IMAGE_COUNT = 1;
 function getXY() {
 	var xPos = NEXT_START_POSITION.xPos;
 	var yPos = NEXT_START_POSITION.yPos;
+	if(IMAGES_PER_ROW*IMAGES_PER_ROW === globalImageCount){
+		NEXT_START_POSITION.xPos = xPos + divMeasures.width;
+		if(IMAGES_PER_ROW!==1){
+			NEXT_START_POSITION.xPos = NEXT_START_POSITION.xPos + divMeasures.width;
+		}
+		NEXT_START_POSITION.yPos = yPos - divMeasures.height;
 
-	if(IMAGES_PER_ROW*IMAGES_PER_ROW === globalImageCount-1){
-		NEXT_START_POSITION.xPos = direction.getPosition(xPos, yPos).xPos + divMeasures.width;
-		NEXT_START_POSITION.yPos = direction.getPosition(xPos, yPos).yPos - divMeasures.height;
-
+		direction.setDirectionSouth();
 		IMAGES_PER_ROW +=2;
 		SIDE_IMAGE_COUNT = 1;
-	}else if(IMAGES_PER_ROW === 1){
-		NEXT_START_POSITION.xPos = direction.getPosition(xPos, yPos).xPos;
-		NEXT_START_POSITION.yPos = direction.getPosition(xPos, yPos).yPos - divMeasures.height;
-		IMAGES_PER_ROW +=2;
-		SIDE_IMAGE_COUNT = 1;
+		CIRCLE_IMAGE_COUNT = 1;
 	}else{
 		NEXT_START_POSITION = direction.getPosition(xPos, yPos);
 	}
 
 	//set new direction
-	if ((SIDE_IMAGE_COUNT == (IMAGES_PER_ROW-1)) || IMAGES_PER_ROW === 1){
-		SIDE_IMAGE_COUNT = 1
+	if (SIDE_IMAGE_COUNT === IMAGES_PER_ROW){
+		SIDE_IMAGE_COUNT = 2;
 		direction.setNewDirection();
 	}else{
 		SIDE_IMAGE_COUNT += 1;
 	}
-	console.log('globalImageCount: %s SIDE_IMAGECOUNT: %d', globalImageCount, SIDE_IMAGE_COUNT);
 	return  {xPos:xPos, yPos:yPos};
 }
 
