@@ -11,6 +11,14 @@
 
 var impress = (function (document, window) {
 
+	// The original window size, where the presentation was be created and tested.
+	// On a larger or smaller window it will be resized.
+	// TODO: it should be changed with the JS API
+	var originalSize = {
+		width:1280,
+		height:800
+	};
+
 	// HELPER FUNCTIONS
 
 	var pfx = (function () {
@@ -172,9 +180,13 @@ var impress = (function (document, window) {
 		return (active !== null && active !== undefined && "overview" === active.id);
 	};
 
-	var select = function (el) {
-		// selected element is not defined as step or is already active
-		if (!el || !el.stepData || el == active) return false;
+	var select = function (el, force) {
+		if (!el || !el.stepData) {
+			return false;
+		}
+		if (el == active && !force) {
+			return false;
+		}
 
 		// Sometimes it's possible to trigger focus on first link with some keyboard action.
 		// Browser in such a case tries to scroll the page to make this element visible
@@ -218,8 +230,8 @@ var impress = (function (document, window) {
 
 		if (el.id === 'overview') {
 			target.translate = {
-				x:-700,
-				y:-575,
+				x:0,
+				y:0,
 				z:-step.translate.z
 			}
 		} else {
@@ -230,7 +242,17 @@ var impress = (function (document, window) {
 			}
 		}
 		var zoomin = target.scale.x >= current.scale.x;
-
+		// Correct the scale based on the window's size
+		var windowScale = Math.min(window.innerHeight / originalSize.height, window.innerWidth/originalSize.width);
+		target.scale.x = target.scale.x*windowScale;
+		target.scale.y = target.scale.y*windowScale;
+		css(impress, {
+					// to keep the perspective look similar for different scales
+					// we need to 'scale' the perspective, too
+					perspective:step.scale.x * 1000 + "px",
+					transform:scale(target.scale),
+					transitionDelay:(zoomin ? "500ms" : "0ms")
+				});
 		if (el.id !== 'overview') {
 			css(el, {
 				position:"absolute",
@@ -251,13 +273,7 @@ var impress = (function (document, window) {
 			var detailsCon = byId('details_'+nr);
 			detailsCon.style.display = 'block';
 		}
-		css(impress, {
-			// to keep the perspective look similar for different scales
-			// we need to 'scale' the perspective, too
-			perspective:step.scale.x * 1000 + "px",
-			transform:scale(target.scale),
-			transitionDelay:(zoomin ? "500ms" : "0ms")
-		});
+
 
 		css(canvas, {
 			transform:rotate(target.rotate, true) + translate(target.translate),
@@ -554,6 +570,11 @@ var impress = (function (document, window) {
 					transitionDuration:"500ms"
 				});
 	}
+
+		window.addEventListener("resize", function () {
+		        // Force select on resize
+		        select( active, true );
+		    }, false);
 
 	// START
 	// by selecting step defined in url or first step of the presentation
