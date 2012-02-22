@@ -100,6 +100,7 @@ function getXY() {
 
     direction.setSouth();
     IMAGES_PER_ROW += 2;
+    onCircleChangeEvent();
     SIDE_IMAGE_COUNT = 1;
     CIRCLE_IMAGE_COUNT = 1;
   } else {
@@ -135,7 +136,13 @@ function showPhotos() {
     var titleText = title.firstChild.nodeValue;
     if (contains(titleText, filterArray)) {
       var thumbnail = item.getElementsByTagName("thumbnail")[0];
-      var detailsText = decodeURIComponent(unescape(item.getElementsByTagName('description')[1].firstChild.nodeValue).replace(/\+/g, " "));
+      var detailsText = unescape(item.getElementsByTagName('description')[1].firstChild.nodeValue).replace(/\+/g, " ");
+      try {
+        detailsText = decodeURIComponent(detailsText);
+      } catch (e) {
+        // ignore it for now
+      }
+
       var img = new Image();
       img.addEventListener('load', function () {
         impress.handleDescription(this);
@@ -175,7 +182,17 @@ function showPhotos() {
     }
   }
   impress.updateImpress(tmpDiv);
-  impress.updateImpress(detailTMPDiv);
+//  impress.updateImpress(detailTMPDiv);
+}
+
+function onCircleChangeEvent(){
+  if(impress.isOverview()){
+    var overviewDiv = document.getElementById('overview');
+    var newScaleFactor = (IMAGES_PER_ROW * 3.2) / 7;
+    overviewDiv.stepData.scale.x = newScaleFactor;
+    overviewDiv.stepData.scale.y = newScaleFactor;
+    impress.select(overviewDiv, true);
+  }
 }
 
 function load(start) {
@@ -183,7 +200,7 @@ function load(start) {
   var url = "http://www.digi-images.de/cooliris.rss?&custAlbum=lastup&start=" + start;
   var regex = new RegExp("^.*?:\\.*");
   if (null !== host && undefined !== host && host.match(regex)) {
-    url = JSON.parse(host);
+    url = JSON.parse(host)+"&start="+start;
   }
 
   req = new XMLHttpRequest();
