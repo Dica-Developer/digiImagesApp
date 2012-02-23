@@ -3,24 +3,11 @@
    License: none (public domain)
 */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+* {
     margin: 0;
     padding: 0;
     border: 0;
     font-size: 100%;
-    font: inherit;
     vertical-align: baseline;
 }
 
@@ -31,6 +18,11 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
     line-height: 1;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'PT Sans', sans-serif;
+    min-height: 740px;
+    background: rgb(215, 215, 215);
 }
 ol, ul {
     list-style: none;
@@ -40,29 +32,12 @@ blockquote, q {
 }
 blockquote:before, blockquote:after,
 q:before, q:after {
-    content: '';
     content: none;
 }
 
 table {
     border-collapse: collapse;
     border-spacing: 0;
-}
-
-
-body {
-    font-family: 'PT Sans', sans-serif;
-    
-    min-height: 740px;
-
-    background: rgb(215, 215, 215);
-    background: -webkit-gradient(radial, 50% 50%, 0, 50% 50%, 500, from(rgb(240, 240, 240)), to(rgb(190, 190, 190)));
-    background: -webkit-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:    -moz-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:      -o-radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-    background:         radial-gradient(rgb(240, 240, 240), rgb(190, 190, 190));
-
-    -webkit-font-smoothing: antialiased;
 }
 
 b, strong { font-weight: bold }
@@ -72,7 +47,7 @@ a {
     color: inherit;
     text-decoration: none;
     padding: 0 0.1em;
-    background: rgba(255,255,255,0.5);
+    background-color: rgba(255,255,255,0.5);
     text-shadow: -1px -1px 2px rgba(100,100,100,0.9);
     border-radius: 0.2em;
     
@@ -84,7 +59,7 @@ a {
 }
 
 a:hover {
-    background: rgba(255,255,255,1);
+    background-color: rgba(255,255,255,1);
     text-shadow: -1px -1px 2px rgba(100,100,100,0.5);
 }
 
@@ -93,15 +68,8 @@ a:hover {
 .step {
     width: 550px;
     padding: 25px;
-
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing:    border-box;
-    -ms-box-sizing:     border-box;
-    -o-box-sizing:      border-box;
     box-sizing:         border-box;
-
     font-family: serif;
-
     font-size: 48px;
     line-height: 1.5;
 }
@@ -130,7 +98,7 @@ a:hover {
     right: 0;
     bottom: 200px;
     
-    background: rgba(0,0,0,0.5);
+    background-color: rgba(0,0,0,0.5);
     color: #EEE;
     text-align: center;
     
@@ -198,8 +166,8 @@ a:hover {
 .slide {
     display: block;
 
-    width: 550px;
-    height: 550px;
+    width: 350px;
+    height: 350px;
 
     padding: 25px 25px;
 
@@ -207,7 +175,7 @@ a:hover {
 
     background-color: white;
 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .5);
     border: 1px solid rgba(0, 0, 0, .3);
 
     font-family: sans-serif;
@@ -263,5 +231,38 @@ a:hover {
     display: block;
 }
 
+.slide > div.description {
+    font-size: .5em;
+    color: #AAA;
+    text-shadow: 2px 2px 4px #CCC;
+    font-family: Helvetica, sans-serif;
+    text-align: center;
+    width: 100%;
+}
+.slide.active > div.description {
+    font-size: .8em;
+    color: #AAA;
+    text-shadow: 2px 2px 4px #CCC;
+    font-family: Helvetica,sans-serif;
+    text-align: center;
+    width: 100%;
+}
 
+img {
+    float: left;
+}
 
+div.description.rotate {
+-webkit-transform: rotateZ(90deg);
+position: absolute;
+top: 0;
+right: 10px;
+min-height: 100%;
+}
+
+.details {
+    width: 300px;
+    display: none;
+    background-color: #CCC;
+    box-shadow: 4px 4px 4px #333;
+}
