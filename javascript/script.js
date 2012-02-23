@@ -57,14 +57,10 @@ var direction = (function () {
   var setSouth = function () {
     _actDirection = 0;
   };
-  var getDirection = function () {
-    return _directions[_actDirection];
-  };
 
   return {
     getPosition:getPosition,
     setNewDirection:setNewDirection,
-    getDirection:getDirection,
     setSouth:setSouth
   };
 })();
@@ -186,11 +182,11 @@ function showPhotos() {
 }
 
 function onCircleChangeEvent(){
-  if(impress.isOverview()){
     var overviewDiv = document.getElementById('overview');
     var newScaleFactor = (IMAGES_PER_ROW * 3.2) / 7;
     overviewDiv.stepData.scale.x = newScaleFactor;
     overviewDiv.stepData.scale.y = newScaleFactor;
+  if(impress.isOverview()){
     impress.select(overviewDiv, true);
   }
 }
