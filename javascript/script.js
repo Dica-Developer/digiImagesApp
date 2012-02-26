@@ -20,10 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+var endImage = null;
 var globalLoadCount = 0;
 var globalImageCount = 0;
-var PRELOAD_IMAGES = 25;
-var MAX_IMAGES = 220;
+var MAX_IMAGES = 225;
 var IMAGES_PER_ROW = 1;
 var ELEM_ID = 0;
 var NEXT_START_POSITION = {xPos:0, yPos:0};
@@ -118,6 +118,7 @@ function getXY() {
 
     direction.setSouth();
     IMAGES_PER_ROW += 2;
+    endImage = IMAGES_PER_ROW * IMAGES_PER_ROW;
     onCircleChangeEvent();
     SIDE_IMAGE_COUNT = 1;
     CIRCLE_IMAGE_COUNT = 1;
@@ -147,7 +148,7 @@ function showPhotos() {
   var items = req.responseXML.getElementsByTagName("item");
   var tmpDiv = document.createElement('div');
   var detailTMPDiv = document.createElement('div');
-  for (var i = 0, l = items.length; i < l && globalImageCount < MAX_IMAGES; i++) {
+  for (var i = 0, l = items.length; i < l && globalImageCount < MAX_IMAGES && (endImage === null || endImage > globalImageCount); i++) {
     var item = items[i];
     globalImageCount++;
     var title = item.getElementsByTagName("title")[0];
@@ -200,14 +201,20 @@ function showPhotos() {
     }
   }
   impress.updateImpress(tmpDiv);
+  console.log(endImage+" > "+ globalImageCount);
+  if (null !== endImage && endImage > globalImageCount) {
+    console.log("jubel");
+    endImage = IMAGES_PER_ROW * IMAGES_PER_ROW
+    load(globalImageCount);
+  }
 //  impress.updateImpress(detailTMPDiv);
 }
 
-function onCircleChangeEvent(){
-    var overviewDiv = document.getElementById('overview');
-    var newScaleFactor = (IMAGES_PER_ROW * 3.2) / 7;
-    overviewDiv.stepData.scale.x = newScaleFactor;
-    overviewDiv.stepData.scale.y = newScaleFactor;
+function onCircleChangeEvent() {
+  var overviewDiv = document.getElementById('overview');
+  var newScaleFactor = (IMAGES_PER_ROW * 3.2) / 7;
+  overviewDiv.stepData.scale.x = newScaleFactor;
+  overviewDiv.stepData.scale.y = newScaleFactor;
   if(impress.isOverview()){
     impress.select(overviewDiv, true);
   }
@@ -226,3 +233,4 @@ function load(start) {
   req.onload = showPhotos;
   req.send(null);
 }
+
