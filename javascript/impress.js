@@ -239,7 +239,12 @@ var impress = (function (document, window) {
       target.translate = {
         x:-step.translate.x,
         y:-step.translate.y,
-        z:-step.translate.z
+        z:-step.translate.z - 2
+      }
+      target.scale = {
+        x:1.3 / parseFloat(step.scale.x),
+        y:1.3 / parseFloat(step.scale.y),
+        z:1 / parseFloat(step.scale.z)
       }
     }
     var zoomin = target.scale.x >= current.scale.x;
@@ -307,8 +312,9 @@ var impress = (function (document, window) {
   // EVENTS
 
   function partiallyLoad(next) {
-    if (next === (globalImageCount - IMAGES_PER_ROW)) {
-      load(35 * globalLoadCount);
+    if (next === (globalImageCount - 2)) {
+      endImage = IMAGES_PER_ROW * IMAGES_PER_ROW;
+      load(globalImageCount);
     }
   }
 

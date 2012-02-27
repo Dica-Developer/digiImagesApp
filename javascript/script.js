@@ -20,7 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-var endImage = null;
+var endImage = 9;
+var settingNextImageNeedsOnCircleChangeEvent = false;
 var globalLoadCount = 0;
 var globalImageCount = 0;
 var MAX_IMAGES = 225;
@@ -107,6 +108,10 @@ function contains(shouldContain, filter) {
  */
 var CIRCLE_IMAGE_COUNT = 1;
 function getXY() {
+  if (settingNextImageNeedsOnCircleChangeEvent) {
+    onCircleChangeEvent();
+    settingNextImageNeedsOnCircleChangeEvent = false;
+  }
   var xPos = NEXT_START_POSITION.xPos;
   var yPos = NEXT_START_POSITION.yPos;
   if (IMAGES_PER_ROW * IMAGES_PER_ROW === globalImageCount) {
@@ -118,8 +123,7 @@ function getXY() {
 
     direction.setSouth();
     IMAGES_PER_ROW += 2;
-    endImage = IMAGES_PER_ROW * IMAGES_PER_ROW;
-    onCircleChangeEvent();
+    settingNextImageNeedsOnCircleChangeEvent = true;
     SIDE_IMAGE_COUNT = 1;
     CIRCLE_IMAGE_COUNT = 1;
   } else {
@@ -201,10 +205,8 @@ function showPhotos() {
     }
   }
   impress.updateImpress(tmpDiv);
-  console.log(endImage+" > "+ globalImageCount);
-  if (null !== endImage && endImage > globalImageCount) {
-    console.log("jubel");
-    endImage = IMAGES_PER_ROW * IMAGES_PER_ROW
+  if (null !== endImage && endImage > globalImageCount && globalImageCount < MAX_IMAGES) {
+    endImage = IMAGES_PER_ROW * IMAGES_PER_ROW;
     load(globalImageCount);
   }
 //  impress.updateImpress(detailTMPDiv);
