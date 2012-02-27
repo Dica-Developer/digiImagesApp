@@ -8,14 +8,15 @@
  *
  * Copyright 2011 Bartek Szopka (@bartaz)
  */
+/**
+ * Modified for internal use.
+ */
+
 
 var impress = (function (document, window) {
 
-  // The original window size, where the presentation was be created and tested.
-  // On a larger or smaller window it will be resized.
-  // TODO: it should be changed with the JS API
   var originalSize = {
-    width:1280,
+    width:800,
     height:800
   };
 
@@ -201,7 +202,9 @@ var impress = (function (document, window) {
 
     var step = el.stepData;
 
-    if (active) active.classList.remove("active");
+    if (active) {
+      active.classList.remove("active");
+    }
     el.classList.add("active");
 
     impress.className = "step-" + el.id;
@@ -277,8 +280,6 @@ var impress = (function (document, window) {
       var img = $('img', el);
       img.src = img.src.replace('size=300', 'size=500');
       var nr = el.id.substr(el.id.indexOf('-') + 1);
-//      var detailsCon = byId('details_' + nr);
-//      detailsCon.style.display = 'block';
     }
 
 
@@ -304,8 +305,6 @@ var impress = (function (document, window) {
       var img = $('img', el);
       img.src = img.src.replace('size=500', 'size=300');
       var nr = el.id.substr(el.id.indexOf('-') + 1);
-//      var detailsCon = byId('details_' + nr);
-//      detailsCon.style.display = '';
     }
   }
 
@@ -325,8 +324,9 @@ var impress = (function (document, window) {
       var next, href;
       if (!isOverview()) {
         switch (event.keyCode) {
-          case 33:  // pg up
+          case 34:  // pg down
           case 37:  // left
+          case 40:  // down
             deselect(active);
             next = steps.indexOf(active) - 1;
             partiallyLoad(next);
@@ -334,26 +334,13 @@ var impress = (function (document, window) {
             select(next);
             break;
           case 38:  // up
-            deselect(active);
-            next = steps.indexOf(active) - IMAGES_PER_ROW;
-            partiallyLoad(next);
-            next = next >= 1 ? steps[ next ] : steps[ steps.length + next ];
-            select(next);
-            break;
+          case 33:  // pg up
           case 9:   // tab
-          case 34:  // pg down
           case 39:  // right
             deselect(active);
             next = steps.indexOf(active) + 1;
             partiallyLoad(next);
             next = next < steps.length ? steps[ next ] : steps[ 1 ];
-            select(next);
-            break;
-          case 40:  // down
-            deselect(active);
-            next = steps.indexOf(active) + IMAGES_PER_ROW;
-            partiallyLoad(next);
-            next = next < steps.length ? steps[ next ] : steps[ next - steps.length ];
             select(next);
             break;
           case 32: // space
@@ -367,14 +354,12 @@ var impress = (function (document, window) {
             href = $('a', active).getAttribute('href');
             document.location.href = href;
             break;
-//          case 82: // r
-//            var nr = steps.indexOf(active);
-//            flipDetails(nr);
         }
       } else {
         switch (event.keyCode) {
-          case 33:  // pg up
+          case 34:  // pg down
           case 37:  // left
+          case 40:  // down
             next = steps.indexOf(hovered) - 1;
             partiallyLoad(next);
             next = next >= 1 ? steps[ next ] : steps[ steps.length - 1 ];
@@ -385,31 +370,12 @@ var impress = (function (document, window) {
             hover(hovered);
             break;
           case 38:  // up
-            next = steps.indexOf(hovered) - IMAGES_PER_ROW;
-            partiallyLoad(next);
-            next = next >= 1 ? steps[ next ] : steps[ steps.length + next ];
-            if (null !== hovered) {
-              unHover(hovered);
-            }
-            hovered = next;
-            hover(hovered);
-            break;
           case 9:   // tab
-          case 34:  // pg down
           case 39:  // right
+          case 33:  // pg up
             next = steps.indexOf(hovered) + 1;
             partiallyLoad(next);
             next = next < steps.length ? steps[ next ] : steps[ 1 ];
-            if (null !== hovered) {
-              unHover(hovered);
-            }
-            hovered = next;
-            hover(hovered);
-            break;
-          case 40:  // down
-            next = steps.indexOf(hovered) + IMAGES_PER_ROW;
-            partiallyLoad(next);
-            next = next < steps.length ? steps[ next ] : steps[ next - steps.length ];
             if (null !== hovered) {
               unHover(hovered);
             }
@@ -461,9 +427,7 @@ var impress = (function (document, window) {
     // event delegation with "bubbling"
     // check if event target (or any of its parents is a link or a step)
     var target = event.target;
-    while ((target.tagName != "A") &&
-      (!target.stepData) &&
-      (target != document.body)) {
+    while ((target.tagName != "A") && (!target.stepData) && (target != document.body)) {
       target = target.parentNode;
     }
 
@@ -476,6 +440,14 @@ var impress = (function (document, window) {
       }
     }
 
+    hovered = hovered || steps[0];
+    if (active.id !== 'overview') {
+      deselect(active);
+    } else {
+      if (null !== hovered) {
+        unHover(hovered);
+      }
+    }
     if (select(target)) {
       event.preventDefault();
     }
@@ -511,9 +483,9 @@ var impress = (function (document, window) {
             z:data.z + 50 || 50
           },
           rotate:{
-            x:data.rotate_x || 0,
-            y:data.rotate_y || 0,
-            z:data.rotate_z || data.rotate || 0
+            x:data.rotateX || 0,
+            y:data.rotateY || 0,
+            z:data.rotateY || data.rotate || 0
           },
           scale:{
             x:data.scaleX || data.scale || 1,
@@ -526,21 +498,7 @@ var impress = (function (document, window) {
             z:data.hoverZ || 1
           }
         };
-//      if (el.className === 'details') {
-//        step.detailsRotate = {
-//          x:0,
-//          y:0,
-//          z:0
-//        }
-//      }
       el.stepData = step;
-//      if (elem.className !== 'details') {
-//        ELEM_ID++;
-//        if (!el.id) el.id = "step-" + ELEM_ID;
-//      } else {
-//        if (!el.id) el.id = "details-" + ELEM_ID;
-//      }
-
       css(el, {
         position:"absolute",
         transform:"translate(-50%,-50%)" +
@@ -549,34 +507,19 @@ var impress = (function (document, window) {
           scale(step.scale),
         transformStyle:"preserve-3d"
       });
-      if (partiallyLoad) canvas.appendChild(el);
+      if (partiallyLoad) {
+        canvas.appendChild(el);
+      }
     });
     if (partiallyLoad) {
       steps = $$(".step", impress);
     }
-//    if ($$('.details', elem[0]).length !== 0) cssTranslation($$('.details', impress), false);
   }
 
   function handleDescription(elem) {
-    var height = elem.offsetHeight;
-    var width = elem.offsetWidth;
-    if (height > width)$('div', elem.parentNode.parentNode).classList.add('rotate');
-  }
-
-  function flipDetails(nr) {
-    var detailsCon = byId('details_' + nr);
-    var step = detailsCon.stepData;
-    css(detailsCon, {
-      position:"absolute",
-      transform:"translate(-50%,-50%)" +
-        translate(step.translate) +
-        rotate(step.detailsRotate, false) +
-        scale(step.scale),
-      transformStyle:"preserve-3d",
-      transitionProperty:"all",
-      transitionTimingFunction:"ease-out",
-      transitionDuration:"500ms"
-    });
+    if (elem.offsetHeight > elem.offsetWidth) {
+      $('div', elem.parentNode.parentNode).classList.add('rotate');
+    }
   }
 
   window.addEventListener("resize", function () {
@@ -587,7 +530,6 @@ var impress = (function (document, window) {
   // START
   // by selecting step defined in url or first step of the presentation
   select(getElementFromUrl() || steps[0]);
-
 
   var updateImpress = function (elem) {
     elem = arrayify(elem.childNodes);
@@ -601,4 +543,3 @@ var impress = (function (document, window) {
     select: select
   };
 })(document, window);
-

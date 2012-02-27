@@ -151,7 +151,6 @@ function showPhotos() {
 
   var items = req.responseXML.getElementsByTagName("item");
   var tmpDiv = document.createElement('div');
-  var detailTMPDiv = document.createElement('div');
   for (var i = 0, l = items.length; i < l && globalImageCount < MAX_IMAGES && (endImage === null || endImage > globalImageCount); i++) {
     var item = items[i];
     globalImageCount++;
@@ -159,13 +158,6 @@ function showPhotos() {
     var titleText = title.firstChild.nodeValue;
     if (contains(titleText, filterArray)) {
       var thumbnail = item.getElementsByTagName("thumbnail")[0];
-      var detailsText = unescape(item.getElementsByTagName('description')[1].firstChild.nodeValue).replace(/\+/g, " ");
-      try {
-        detailsText = decodeURIComponent(detailsText);
-      } catch (e) {
-        // ignore it for now
-      }
-
       var img = new Image();
       img.addEventListener('load', function () {
         impress.handleDescription(this);
@@ -175,16 +167,12 @@ function showPhotos() {
 
       var titleSpan = document.createElement('div');
       titleSpan.setAttribute('class', 'description');
-      titleSpan.setAttribute('data-rotateZ', '90');
       var spanText = document.createTextNode(titleText);
       titleSpan.appendChild(spanText);
       var linkSrc = item.getElementsByTagName("content")[0].getAttribute("url");
       var link = document.createElement("a");
       link.href = "http://www.digi-images.de/showImage.html?imageId=" + linkSrc.replace(/^.*imageId=(\d+).*$/, "$1") + "&custAlbum=lastup";
       link.appendChild(img);
-      var detailsDiv = document.createElement('div');
-      detailsDiv.setAttribute('class', 'details');
-      detailsDiv.innertHTML = detailsText;
       var div = document.createElement("div");
       div.setAttribute("class", "step slide");
       var position = getXY();
@@ -194,13 +182,6 @@ function showPhotos() {
       div.setAttribute("data-hover", "2");
       div.appendChild(link);
       div.appendChild(titleSpan);
-
-      detailsDiv.setAttribute("data-x", position.xPos);
-      detailsDiv.setAttribute("data-y", position.yPos);
-      detailsDiv.setAttribute("data-z", "220");
-      detailsDiv.setAttribute("data-scale", "2");
-      detailsDiv.setAttribute("data-rotate_X", "90");
-      detailTMPDiv.appendChild(detailsDiv);
       tmpDiv.appendChild(div);
     }
   }
@@ -209,7 +190,6 @@ function showPhotos() {
     endImage = IMAGES_PER_ROW * IMAGES_PER_ROW;
     load(globalImageCount);
   }
-//  impress.updateImpress(detailTMPDiv);
 }
 
 function onCircleChangeEvent() {
