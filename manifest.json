@@ -1,6 +1,6 @@
 {
 	"name": "Digi-Images Slider",
-	"version": "2.0",
+	"version": "3.0",
 	"description": "Slide through Digi-Images photos. See Digi-Images on http://www.digi-images.de/ .",
 	"app": {
     "launch": {
